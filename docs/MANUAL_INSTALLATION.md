@@ -21,7 +21,7 @@ StableGen requires specific custom nodes for ComfyUI to function correctly, part
 3.  Clone the following repository:
     * **ComfyUI IPAdapter Plus:**
         ```bash
-        git clone [https://github.com/cubiq/ComfyUI_IPAdapter_plus.git](https://github.com/cubiq/ComfyUI_IPAdapter_plus.git)
+        git clone https://github.com/cubiq/ComfyUI_IPAdapter_plus.git
         ```
 4.  **Restart ComfyUI** after installing new custom nodes to ensure they are loaded.
 
@@ -126,6 +126,25 @@ FLUX.1 is a newer diffusion architecture and its usage in StableGen is optional.
     * **License:** FLUX-1-dev Non-Commercial License
     * **Size:** ~24 GB
 
+    **(Optional) You can also download a quantized version (GGUF format) instead for potentially improved performance:**
+    * **Directory:** `<YourComfyUIDirectory>/models/unet/`
+    * **Filename:** `flux1-dev.gguf`
+    * **Download URL:** [https://huggingface.co/city96/FLUX.1-dev-gguf/tree/main](https://huggingface.co/city96/FLUX.1-dev-gguf/tree/main)
+    * **License:** FLUX-1-dev Non-Commercial License
+    * **Size:** ~5 to 12.7 GB (depending on quantization)
+
+    For GGUF (quantized) model support, you will also need to install the following custom node into ComfyUI:
+
+    1.  Navigate to your ComfyUI custom nodes directory:
+        ```bash
+        cd <YourComfyUIDirectory>/custom_nodes/
+        ```
+    2.  Clone the repository:
+        ```bash
+        git clone https://github.com/city96/ComfyUI-GGUF.git
+        ```
+
+
 * **b) FLUX CLIP Models (Required for FLUX.1-dev):**
     * **Directory:** `<YourComfyUIDirectory>/models/clip/`
     * **File 1:** `t5xxl_fp8_e4m3fn.safetensors` ([URL](https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors?download=true))
@@ -133,15 +152,31 @@ FLUX.1 is a newer diffusion architecture and its usage in StableGen is optional.
     * **License (for both CLIP models):** Apache 2.0
     * **Combined Size:** ~5.5 GB
 
-* **c) FLUX ControlNet (Union - Depth/Canny):**
-    * **Directory:** `<YourComfyUIDirectory>/models/controlnet/`
-    * **Target Filename:** `controlnet_flux1_union_pro.safetensors`
-    * **Download URL:** [https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro/resolve/main/diffusion_pytorch_model.safetensors?download=true](https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro/resolve/main/diffusion_pytorch_model.safetensors?download=true)
-    * **Action:** Download and **rename** to `controlnet_flux1_union_pro.safetensors`.
-    * **License:** FLUX-1-dev Non-Commercial License
-    * **Size:** ~6.5 GB
+* **c) FLUX VAE Model (Required for FLUX.1-dev):**
+    * **Directory:** `<YourComfyUIDirectory>/models/vae/`
+    * **Filename:** `ae.safetensors`
+    * **Target Filename:** `ae.sft` (Rename is necessary here!!)
+    * **Download URL:** [https://huggingface.co/black-forest-labs/FLUX.1-dev/](https://huggingface.co/black-forest-labs/FLUX.1-dev/)
+    * **License:** Apache 2.0
+    * **Size:** ~2.5 GB
+
+* **d) Guidance (ControlNet and/or FLUX.1-dev Depth LoRA):**
+    
+   *  FLUX ControlNet (Union - Depth/Canny):
+        * **Directory:** `<YourComfyUIDirectory>/models/controlnet/`
+        * **Target Filename:** `controlnet_flux1_union_pro.safetensors`
+        * **Download URL:** [https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro/resolve/main/diffusion_pytorch_model.safetensors?download=true](https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro/resolve/main/diffusion_pytorch_model.safetensors?download=true)
+        * **Action:** Download and **rename** to `controlnet_flux1_union_pro.safetensors`.
+        * **License:** FLUX-1-dev Non-Commercial License
+        * **Size:** ~6.5 GB
+    *  FLUX.1-dev Depth LoRA (alternative to ControlNet):
+        * **Directory:** `<YourComfyUIDirectory>/models/loras/`
+        * **Filename:** `flux1_depth_lora.safetensors`
+        * **Download URL:** [https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev-lora/](https://huggingface.co/black-forest-labs/FLUX.1-Depth-dev-lora/)
+        * **License:** FLUX-1-dev Non-Commercial License
+        * **Size:** ~1.2 GB
  
-* **d) FLUX.1 IPAdapter Custom Node (Enables IPAdapter for FLUX)**
+* **e) FLUX.1 IPAdapter Custom Node (Enables IPAdapter for FLUX)**
     * **Note:** This is required to use IPAdapter with the FLUX.1 model.
     1.  Navigate to your ComfyUI custom nodes directory:
         ```bash
@@ -149,13 +184,62 @@ FLUX.1 is a newer diffusion architecture and its usage in StableGen is optional.
         ```
     2.  Clone the repository:
         ```bash
-        git clone [https://github.com/Shakker-Labs/ComfyUI-IPAdapter-Flux.git](https://github.com/Shakker-Labs/ComfyUI-IPAdapter-Flux.git)
+        git clone https://github.com/Shakker-Labs/ComfyUI-IPAdapter-Flux.git
         ```
     3.  **Restart ComfyUI** after installation.
 
-* **e) FLUX.1 IPAdapter Model**
+* **f) FLUX.1 IPAdapter Model**
     * **Directory:** `<YourComfyUIDirectory>/models/ipadapter-flux/`
     * **Filename:** `ip-adapter.bin`
     * **Download URL:** [https://huggingface.co/InstantX/FLUX.1-dev-IP-Adapter/resolve/main/ip-adapter.bin?download=true](https://huggingface.co/InstantX/FLUX.1-dev-IP-Adapter/resolve/main/ip-adapter.bin?download=true)
     * **License:** FLUX-1-dev Non-Commercial License
     * **Size:** ~6.5 GB
+
+**6. (Optional) Qwen Image Edit Setup**
+
+StableGen can interface with the experimental Qwen Image Edit 2509 workflow for rapid texture refinements. These components are large and require the ComfyUI GGUF loader.
+
+* **a) Install the ComfyUI GGUF Loader (Custom Node)**
+    1. Navigate to your ComfyUI custom nodes directory:
+        ```bash
+        cd <YourComfyUIDirectory>/custom_nodes/
+        ```
+    2. Clone the GGUF loader repository:
+        ```bash
+        git clone https://github.com/city96/ComfyUI-GGUF.git
+        ```
+    3. Restart ComfyUI to load the new node.
+
+* **b) Download the Qwen Image Edit UNet (GGUF)**
+    * **Directory:** `<YourComfyUIDirectory>/models/unet/`
+    * **Filename:** `Qwen-Image-Edit-2509-Q3_K_M.gguf`
+    * **Download URL:** [https://huggingface.co/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q3_K_M.gguf?download=true](https://huggingface.co/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q3_K_M.gguf?download=true)
+    * **License:** Apache 2.0
+    * **Size:** ~9.5 GB
+
+* **c) Download the Qwen Image VAE**
+    * **Directory:** `<YourComfyUIDirectory>/models/vae/`
+    * **Filename:** `qwen_image_vae.safetensors`
+    * **Download URL:** [https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors?download=true](https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors?download=true)
+    * **License:** Apache 2.0
+    * **Size:** ~254 MB
+
+* **d) Download the Qwen Text Encoder (FP8)**
+    * **Directory:** `<YourComfyUIDirectory>/models/clip/`
+    * **Filename:** `qwen_2.5_vl_7b_fp8_scaled.safetensors`
+    * **Download URL:** [https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors?download=true](https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors?download=true)
+    * **License:** Apache 2.0
+    * **Size:** ~9.2 GB
+
+* **e) Install the Core Qwen Lightning LoRA (Required for StableGen Presets)**
+    * **Directory:** `<YourComfyUIDirectory>/models/loras/`
+    * **Filename:** `Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors`
+    * **Download URL:** [https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors?download=true](https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors?download=true)
+    * **License:** Apache 2.0
+    * **Size:** ~850 MB
+
+* **f) (Optional) Additional Qwen Lightning LoRAs**
+    * **Directory:** `<YourComfyUIDirectory>/models/loras/`
+    * **Qwen Image Edit Lightning 8-Step (bf16):** [https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-8steps-V1.0-bf16.safetensors?download=true](https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Edit-2509/Qwen-Image-Edit-2509-Lightning-8steps-V1.0-bf16.safetensors?download=true)
+    * **Qwen Image Lightning 4-Step (bf16):** [https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Lightning-4steps-V1.0-bf16.safetensors?download=true](https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Lightning-4steps-V1.0-bf16.safetensors?download=true)
+    * Each LoRA is licensed under Apache 2.0 and is approximately 850 MB.

@@ -2,10 +2,33 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Blender Version](https://img.shields.io/badge/Blender-4.2%2B-orange.svg)](#system-requirements)
+[![GitHub All Releases](https://img.shields.io/github/downloads/sakalond/stablegen/total?color=brightgreen&label=Downloads)](https://github.com/sakalond/stablegen/releases)
 
 **Transform your 3D texturing workflow with the power of generative AI, directly within Blender!**
 
-StableGen is an open-source Blender plugin designed to seamlessly integrate advanced diffusion models (SDXL, FLUX.1-dev) into your creative process. Generate complex, coherent, and controllable textures for your 3D models and entire scenes using a flexible ComfyUI backend.
+StableGen is an open-source Blender plugin designed to seamlessly integrate advanced diffusion models (SDXL, FLUX.1-dev, Qwen Image Edit 2509) into your creative process. Generate complex, coherent, and controllable textures for your 3D models and entire scenes using a flexible ComfyUI backend.
+
+---
+
+<details>
+<summary><strong>Table of Contents</strong></summary>
+
+- [🌟 Key Features](#-key-features)
+- [🚀 Showcase Gallery](#-showcase-gallery)
+- [🛠️ How It Works](#️-how-it-works-a-glimpse)
+- [💻 System Requirements](#-system-requirements)
+- [⚙️ Installation](#️-installation)
+- [🚀 Quick Start Guide](#-quick-start-guide)
+- [📖 Usage & Parameters Overview](#-usage--parameters-overview)
+- [📁 Output Directory Structure](#-output-directory-structure)
+- [🤔 Troubleshooting](#-troubleshooting)
+- [🤝 Contributing](#-contributing)
+- [📜 License](#-license)
+- [🙏 Acknowledgements](#-acknowledgements)
+- [💡 List of planned features](#-list-of-planned-features)
+- [📧 Contact](#-contact)
+
+</details>
 
 ---
 
@@ -30,7 +53,7 @@ StableGen empowers 3D artists by bringing cutting-edge AI texturing capabilities
     * Employ IPAdapter without an reference image for enhanced consistency in multi-view generation modes.
     * Control IPAdapter strength, weight type, and active steps.
 * ⚙️ **Flexible ComfyUI Backend:**
-    * Connects to your existing ComfyUI installation, allowing you to use your preferred SDXL checkpoints and custom LoRAs. Experimental support for FLUX.1-dev.
+    * Connects to your existing ComfyUI installation, allowing you to use your preferred SDXL checkpoints, custom LoRAs, and the new Qwen Image Edit workflow alongside experimental FLUX.1-dev support.
     * Offloads heavy computation to the ComfyUI server, keeping Blender mostly responsive.
 * ✨ **Advanced Inpainting & Refinement:**
     * **Refine Mode (Img2Img):** Re-style, enhance, or add detail to existing textures (StableGen generated or otherwise) using an image-to-image process. Choose to preserve original textures for localized refinement.
@@ -113,6 +136,7 @@ StableGen acts as an intuitive interface within Blender that communicates with a
 * **Blender:** Version 4.2 or newer.
 * **Operating System:** Windows 10/11 or Linux.
 * **GPU:** **NVIDIA GPU with CUDA is recommended** for ComfyUI. For further details, check ComfyUI's github page: [https://github.com/comfyanonymous/ComfyUI](https://github.com/comfyanonymous/ComfyUI).
+    * At least 8 GB of VRAM is required to run SDXL at a usable speed; plan for 16 GB or more when running FLUX.1-dev or the Qwen-Image-Edit pipeline.
 * **ComfyUI:** A working installation of ComfyUI. StableGen uses this as its backend.
 * **Python:** Version 3.x (usually comes with Blender, but Python 3 is needed for the `installer.py` script).
 * **Git:** Required by the `installer.py` script.
@@ -124,13 +148,19 @@ StableGen acts as an intuitive interface within Blender that communicates with a
 
 Setting up StableGen involves installing ComfyUI, then StableGen's dependencies into ComfyUI using our installer script, and finally installing the StableGen plugin in Blender.
 
+Follow the step‑by‑step instructions below to install StableGen.
+
+If you’d rather watch, Polynox provides a concise video walkthrough:  
+[StableGen Installation & Basic Usage Video Tutorial](https://www.youtube.com/watch?v=EVNYAMnn_oQ)
+
 ### Step 1: Install ComfyUI (If not already installed)
 
-StableGen relies on a working ComfyUI installation as its backend.
-1.  If you don't have ComfyUI, please follow the **official ComfyUI installation guide**: [https://github.com/comfyanonymous/ComfyUI#installing](https://github.com/comfyanonymous/ComfyUI#installing).
+StableGen relies on a working ComfyUI installation as its backend. This can be done on a separate machine if desired. 
+
+*If you wish to use a separate machine for the backend, do step 1 and 2 there.*
+* If you don't have ComfyUI, please follow the **official ComfyUI installation guide**: [https://github.com/comfyanonymous/ComfyUI#installing](https://github.com/comfyanonymous/ComfyUI#installing).
     * Install ComfyUI in a dedicated directory. We'll refer to this as `<YourComfyUIDirectory>`.
     * Ensure you can run ComfyUI and it's functioning correctly before proceeding.
-    * Remote ComfyUI instances are not currently supported. This includes ComfyUI installations running on a different machine or in a virtual machine (including WSL).
 
 ### Step 2: Install Dependencies (Custom Nodes & AI Models) - Automated (Recommended)
 
@@ -156,11 +186,11 @@ The `installer.py` script (found in this repository) automates the download and 
         ```
         Replace `<YourComfyUIDirectory>` with the actual path. If omitted, the script will prompt for it.
 3.  **Follow On-Screen Instructions:**
-    * The script will display a menu of installation packages (Minimal, Essential, Recommended, Complete SDXL). Choose one based on your needs.
+    * The script will display a menu of installation packages (Minimal, Essential, Recommended, Complete SDXL, plus Qwen-specific bundles). Choose the option that matches the feature set you want to install.
     * It will download and place files into the correct subdirectories of `<YourComfyUIDirectory>`.
 4.  **Restart ComfyUI:** If ComfyUI was running, restart it to load new custom nodes.
 
-*(For manual dependency installation (and for installation of FLUX.1-dev and its dependecies), see `docs/MANUAL_INSTALLATION.md`.)*
+*(For manual dependency installation—including FLUX.1-dev and Qwen Image Edit setups—see `docs/MANUAL_INSTALLATION.md`.)*
 
 ### Step 3: Install StableGen Blender Plugin
 
@@ -175,11 +205,9 @@ The `installer.py` script (found in this repository) automates the download and 
 1.  In Blender, go to `Edit > Preferences > Add-ons`.
 2.  Find "StableGen" and expand its preferences.
 3.  Set the following paths:
-    * **ComfyUI Directory:** Path to your ComfyUI installation (e.g., `<YourComfyUIDirectory>`).
     * **Output Directory:** Choose a folder where StableGen will save generated images.
     * **Server Address:** Ensure this matches your ComfyUI server (default `127.0.0.1:8188`).
     * Review **ControlNet Mapping** if using custom named ControlNet models.
-    * **External Checkpoints / LoRAs Directory (Optional):** Path to your external checkpoint directory. Also has to be configured in ComfyUI.
 4.  Enable online access in Blender if not enabled already. Select `Edit -> Preferences` from the topbar of Blender. Then navigate to `System -> Network` and check the box `Enable Online Access`. While StableGen does not require internet access, this is added to respect Blender add-on guidelines, as there are still network calls being made locally.
 
 ---
@@ -198,8 +226,9 @@ Here’s how to get your first texture generated with StableGen:
     * In the StableGen panel, click "**Add Cameras**". Choose `Object` as center type. Adjust interactively if needed, then confirm.
 5.  **Set Basic Parameters:**
     * **Prompt:** Type a description (e.g., "ancient stone wall with moss").
-    * **Checkpoint:** Select a checkpoint (e.g., `sdxl_base_1.0`).
-    * **Generation Mode:** `Sequential` is a good starting point for consistency.
+    * **Architecture:** Pick the diffusion family (`SDXL`, `Flux 1`, or `Qwen Image Edit`) that matches the workflow you set up.
+    * **Checkpoint:** Select a checkpoint or GGUF file suited to the chosen architecture (e.g., `sdxl_base_1.0` or `Qwen-Image-Edit-2509-Q3_K_M.gguf`).
+    * **Preset:** Choose a preset and apply it. `Default` or `Characters` are good starting points.
 6.  **Hit Generate!** Click the main "**Generate**" button.
 7.  **Observe:** Watch the progress in the panel and the ComfyUI console. Your object should update with the new texture! Output files will be in your specified "Output Directory".
     * By default, the generated texture will only be visible in the Rendered viewport shading mode (CYCLES Render Engine).
@@ -233,7 +262,7 @@ These are your primary controls for defining the generation:
 
 * **Prompt:** The main text description of the texture you want to generate.
 * **Checkpoint:** Select the base SDXL checkpoint.
-* **Architecture:** Choose between `SDXL` and `Flux 1` (experimental) model architectures.
+* **Architecture:** Choose between `SDXL`, `Flux 1` (experimental), and `Qwen Image Edit` (experimental) model architectures.
 * **Generation Mode:** Defines the core strategy for texturing:
     * `Generate Separately`: Each viewpoint generates independently.
     * `Generate Sequentially`: Viewpoints generate one by one, using inpainting from previous views for consistency.
@@ -299,14 +328,14 @@ StableGen organizes the generated files within the `Output Directory` specified 
 Encountering issues? Here are some common fixes. Always check the **Blender System Console** (Window > Toggle System Console) AND the **ComfyUI server console** for error messages.
 
 * **StableGen Panel Not Showing:** Ensure the addon is installed and enabled in Blender's preferences.
-* **"Cannot generate..." on Generate Button:** Check Addon Preferences: `Model Directory`, `Output Directory`, and `Server Address` must be correctly set.
+* **"Cannot generate..." on Generate Button:** Check Addon Preferences: `Output Directory` and `Server Address` must be correctly set. The server also has to be reachable.
 * **Connection Issues with ComfyUI:**
     * Make sure your ComfyUI server is running.
     * Verify the `Server Address` in StableGen preferences.
     * Check firewall settings.
 * **Models Not Found (Error in ComfyUI Console):**
     * Run the `installer.py` script.
-    * Manually ensure models are in the correct subfolders of `<YourComfyUIDirectory>/models/` (e.g., `checkpoints/`, `controlnet/`, `loras/`, `ipadapter/`, `clip_vision/`).
+    * Manually ensure models are in the correct subfolders of `<YourComfyUIDirectory>/models/` (e.g., `checkpoints/`, `controlnet/`, `loras/`, `ipadapter/`, `clip_vision/`, `clip/`, `vae/`, `unet/`).
     * Restart ComfyUI after adding new models or custom nodes.
 * **GPU Out Of Memory (OOM):**
     * Enable `Auto Rescale Resolution` in `Advanced Parameters` > `Output & Material Settings` if disabled.
@@ -343,7 +372,8 @@ StableGen is released under the **GNU General Public License v3.0**. See the `LI
 
 StableGen builds upon the fantastic work of many individuals and communities. Our sincere thanks go to:
 
-* **Academic Roots:** This plugin originated as a Bachelor's Thesis by Ondřej Sakala at the Czech Technical University in Prague (Faculty of Information Technology), supervised by Ing. Radek Richtr, Ph.D.
+* **Academic Roots:** This plugin originated as a Bachelor's Thesis by Ondřej Sakala at the Czech Technical University in Prague (Faculty of Information Technology), supervised by Ing. Radek Richtr, Ph.D. 
+    * Full thesis available at: [https://dspace.cvut.cz/handle/10467/123567](https://dspace.cvut.cz/handle/10467/123567)
 * **Core Technologies & Communities:**
     * **ComfyUI** by ComfyAnonymous ([GitHub](https://github.com/comfyanonymous/ComfyUI)) for the powerful and flexible backend.
     * The **Blender Foundation** and its community for the amazing open-source 3D creation suite.
@@ -377,9 +407,10 @@ The open spirit of the AI and open-source communities is what makes projects lik
 Here are some features we plan to implement in the future (in no particular order):
 * **Advanced IPAdapter support:** Support for custom IPAdapter models, support for advanced IPAdapter parameters.
 * **Upscaling:** Support for upscaling generated textures.
-* **FLUX.1-dev Support Improvements:** Full support for the FLUX.1-dev, depth control LoRAs, and more.
-* **SD 3.5 Support:** Support for the Stable Diffusion 3.5 architecture.
-* **Remote ComfyUI Support:** Allow connecting to remote ComfyUI servers, enabling distributed processing.
+* **Custom VAE, CLIP model selection:** Ability to select custom VAE and CLIP models in addition to custom ControlNet and LoRA models.
+* **Qwen workflow refinements:** Deeper integration for Qwen Image Edit, including UV inpainting and refine modes.
+* **Automatic camera placement improvements:** More advanced camera placement algorithms (e.g., based on model geometry).
+* **Mesh generation:** Integration of mesh generation capabilities.
 
 If you have any suggestions, please feel free to open an issue!
 
@@ -392,4 +423,4 @@ Ondřej Sakala
 * X/Twitter: `@sakalond`
 
 ---
-*Last Updated: July 10, 2025*
+*Last Updated: November 3, 2025*
